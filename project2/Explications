@@ -1,0 +1,8 @@
+On utilise ici un projet openSource : slate
+Il s'agit d'une seule classe "PDF" qui utilise la librairire pdfminer de Python
+Ce code est utilisé pour convertir le pdf en classe PDF qui sera traitée par après
+
+
+Pour installer PDFminer --> pdfminer.six github
+
+Le code "slate" a été modifié par mes soins afin de pouvoir être utilisé avec Python 3 (utiliser pdfminer.six au lieu de pdfminer)
