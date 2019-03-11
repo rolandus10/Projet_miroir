@@ -60,7 +60,7 @@ tk=Tk()
 tl= 2 # for little sentences
 tL= 5 # for long sentences
 t = tl # default configuration
-BING_KEY = "daf975c2970740f8b09c48d35b8926fd" # Microsoft Bing Voice Recognition API key
+BING_KEY = "310ac92800ef4b40ba2a58c5e43cec5a" # Microsoft Bing Voice Recognition API key
 r = sr.Recognizer()
 
 
@@ -1156,7 +1156,7 @@ class Weather(Frame):
             else:
                 location2 = ""
                 # get weather
-                weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, latitude, longitude, weather_lang, weather_unit)
+                weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%shttps://api.darksky.net/forecast/2cc04380b7da65d63932b1eab9ed547b/37.8267,-122.4233" % (weather_api_token, latitude, longitude, weather_lang, weather_unit)
 
             r = requests.get(weather_req_url)
             weather_obj = json.loads(r.text)

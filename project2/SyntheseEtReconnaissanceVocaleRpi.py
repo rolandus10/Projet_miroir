@@ -21,7 +21,7 @@ misUnderstood = False
 tl= 2 # for little sentences
 tL= 5 # for long sentences
 t = tl # default configuration
-BING_KEY = "daf975c2970740f8b09c48d35b8926fd" # Microsoft Bing Voice Recognition API key
+BING_KEY = "d386cb726844455bba64f5f3e774ae9b" # Microsoft Bing Voice Recognition API key
 r = sr.Recognizer()
 
 # answer function 
