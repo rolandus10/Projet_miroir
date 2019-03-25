@@ -16,13 +16,13 @@ window.config(background='Black')
 def premier_etage():
     # frame
     frame2 = Frame(window, bg='Black', bd=2, relief="groove")
-    img2 = PhotoImage(file="assets/navigation.gif")
-    PAE2 = Canvas(frame2, width=500, height=500, bg='white')
-    PAE2.create_image(0, 0, anchor=NW, image=img2)
+    img2 = Image.open("TR__Plans_de_houdain/Screen Shot 2019-03-19 at 4.49.02 PM.png")
+    img2= img2.resize((800,600), Image.ANTIALIAS)
+    photo2 = ImageTk.PhotoImage(img2)
+    PAE2 = Label(frame2, image = photo2)
+    PAE2.image = photo2
     PAE2.pack()
     frame2.pack()
-    webbrowser.open(r"C:\Users\amy\Desktop\Projet_miroir\project2\interface2018_2019\TR__Plans_de_houdain\40-HOUDAIN_R+1.pdf")
-
 
 # frame
 frame = Frame(window, bg='Black', bd=2, relief="groove")

@@ -14,9 +14,9 @@ import os
 import feedparser
 from PIL import Image, ImageTk
 
+from PIL import Image, ImageTk
 
 LOCALE_LOCK = threading.Lock()
-
 
 
 ui_locale = '' # e.g. 'fr_FR' for French, '' as default
