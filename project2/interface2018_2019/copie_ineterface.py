@@ -333,10 +333,9 @@ class NewsHeadline(Frame):
                                       bg="black")
             self.eventNameLbl.pack(side=LEFT, anchor=N)
 
-FONT_menu = ("Arial", 25)
 
 class FullscreenWindow:
-    def __init__(self,tk):
+    def __init__(self):
         global myName
         nbr = 0
         if nbr == 0:
@@ -344,14 +343,9 @@ class FullscreenWindow:
             self.tk = tk
             self.tk.configure(background='black')
             self.topFrame = Frame(self.tk, background='black')
-            self.topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
-            self.menu = Frame(self.topFrame, bg="green").pack(side=BOTTOM, expand=YES)
-            self.navigation = Button(self.menu, text="Navigation", font=FONT_menu, command=self.navigation)
-            self.navigation.pack(side=RIGHT)
-            self.activite = Button(self.menu, text="activite", font=FONT_menu, command=self.toggle_fullscreen)
-            self.activite.pack(side=RIGHT)
-            self.pae = Button(self.menu, text="Pae", font=FONT_menu)
-            self.pae.pack(side=RIGHT)
+            self.bottomFrame = Frame(self.tk, background='black')
+            self.topFrame.pack(side=TOP, fill=BOTH, expand=YES)
+            self.bottomFrame.pack(side=BOTTOM, fill=BOTH, expand=YES)
             self.state = False
             self.toggle_fullscreen()
             # self.end_fullscreen()
@@ -375,8 +369,8 @@ class FullscreenWindow:
             self.weather.pack(side=LEFT, anchor=N, padx=100, pady=10)
 
             # news
-            self.news = News(self.menu)
-            self.news.pack(side=LEFT, anchor=N, padx=100, pady=60)
+            self.news = News(self.bottomFrame)
+            self.news.pack(side=LEFT, anchor=S, padx=100, pady=60)
 
             # calender
             # self.fr.get_matricule()
@@ -386,12 +380,6 @@ class FullscreenWindow:
             # self.facialRecognition()
             # self.speechRecognition()
         nbr += 1
-
-    def navigation(self):
-        nav = Navigation()
-        nav.tk.mainloop()
-
-
 
     def toggle_fullscreen(self, event=None):
         self.state = not self.state  # Just toggling the boolean
@@ -415,35 +403,12 @@ class FullscreenWindow:
         self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
 
 
-class Navigation:
-    def __init__(self):
-        self.tk = Tk()
-        self.tk.configure(background='black')
-        self.topFrame = Frame(self.tk, background='black')
-        self.topFrame.pack(side=TOP, fill=BOTH, expand=YES)
-        self.menu = Frame(self.topFrame, bg="green").pack(side=BOTTOM, fill=X, expand=YES)
-        self.navigation = Button(self.menu, text="Navigation", font=FONT_menu)
-        self.navigation.pack(side=RIGHT)
-        self.activite = Button(self.menu, text="Activite", font=FONT_menu, command=self.toggle_fullscreen)
-        self.activite.pack(side=RIGHT)
-        self.pae = Button(self.menu, text="Pae", font=FONT_menu)
-        self.pae.pack(side=RIGHT)
-        self.state = False
-        self.toggle_fullscreen()
-
-    def toggle_fullscreen(self, event=None):
-        self.state = not self.state  # Just toggling the boolean
-        self.tk.attributes("-fullscreen", self.state)
-        return "break"
-
-
-
 ##if __name__ == '__main__':
 ##    global w
 ##    w = FullscreenWindow()
 ##    w.tk.mainloop()
 
-w = FullscreenWindow(tk)
+w = FullscreenWindow()
 w.tk.mainloop()
 
 
