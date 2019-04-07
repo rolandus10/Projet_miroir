@@ -345,12 +345,13 @@ class FullscreenWindow:
             self.tk.configure(background='black')
             self.topFrame = Frame(self.tk, background='black')
             self.topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
-            self.menu = Frame(self.topFrame, bg="green").pack(side=BOTTOM, expand=YES)
+            self.menu = Frame(self.topFrame, bg="green")
+            self.menu.pack(side=BOTTOM)
             self.navigation = Button(self.menu, text="Navigation", font=FONT_menu, command=self.navigation)
             self.navigation.pack(side=RIGHT)
             self.activite = Button(self.menu, text="activite", font=FONT_menu, command=self.toggle_fullscreen)
             self.activite.pack(side=RIGHT)
-            self.pae = Button(self.menu, text="Pae", font=FONT_menu)
+            self.pae = Button(self.menu, text="Pae", font=FONT_menu, command=self.effacer)
             self.pae.pack(side=RIGHT)
             self.state = False
             self.toggle_fullscreen()
@@ -389,7 +390,10 @@ class FullscreenWindow:
 
     def navigation(self):
         nav = Navigation()
-        nav.tk.mainloop()
+
+    def effacer(self):
+        self.topFrame.destroy()
+        Label(self.tk, text="Hello", font=FONT_menu).pack()
 
 
 
@@ -417,11 +421,12 @@ class FullscreenWindow:
 
 class Navigation:
     def __init__(self):
-        self.tk = Tk()
+        self.tk = Toplevel()
         self.tk.configure(background='black')
         self.topFrame = Frame(self.tk, background='black')
         self.topFrame.pack(side=TOP, fill=BOTH, expand=YES)
-        self.menu = Frame(self.topFrame, bg="green").pack(side=BOTTOM, fill=X, expand=YES)
+        self.menu = Frame(self.topFrame, bg="green")
+        self.menu.pack(side=BOTTOM,expand=YES)
         self.navigation = Button(self.menu, text="Navigation", font=FONT_menu)
         self.navigation.pack(side=RIGHT)
         self.activite = Button(self.menu, text="Activite", font=FONT_menu, command=self.toggle_fullscreen)
