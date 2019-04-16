@@ -343,16 +343,16 @@ class FullscreenWindow:
             # self.tk = Tk()
             self.tk = tk
             self.tk.configure(background='black')
-            self.topFrame = Frame(self.tk, background='black')
-            self.topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
-            self.menu = Frame(self.topFrame, bg="green")
+            self.menu = Frame(self.tk, bg="green")
             self.menu.pack(side=BOTTOM)
             self.navigation = Button(self.menu, text="Navigation", font=FONT_menu, command=self.navigation)
-            self.navigation.pack(side=RIGHT)
+            self.navigation.grid(row=0, column=0, sticky="nsew")
+            self.buttonAcceuil = Button(self.menu, text="Acceuil", font=FONT_menu, command=self.acceuil)
+            self.buttonAcceuil.grid(row=0, column=1, sticky="nsew")
             self.activite = Button(self.menu, text="activite", font=FONT_menu, command=self.toggle_fullscreen)
-            self.activite.pack(side=RIGHT)
+            self.activite.grid(row=0, column=2, sticky="nsew")
             self.pae = Button(self.menu, text="Pae", font=FONT_menu, command=self.effacer)
-            self.pae.pack(side=RIGHT)
+            self.pae.grid(row=0, column=3, sticky="nsew")
             self.state = False
             self.toggle_fullscreen()
             # self.end_fullscreen()
@@ -364,20 +364,29 @@ class FullscreenWindow:
             # myName=self.fr.get_nom(mat)
             # myName=myName.lower().capitalize()
 
-            # clock
-            self.clock = Clock(self.topFrame)
-            self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
+            self.acceuil()
+            nbr += 1
 
-            # self.text = SpeechRecognition(self.bottomFrame)
-            # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
 
-            # weather
-            self.weather = Weather(self.topFrame)
-            self.weather.pack(side=LEFT, anchor=N, padx=100, pady=10)
+    def acceuil(self):
 
-            # news
-            self.news = News(self.menu)
-            self.news.pack(side=LEFT, anchor=N, padx=100, pady=60)
+        self.topFrame = Frame(self.tk, background='black')
+        self.topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+        # clock
+        self.clock = Clock(self.topFrame)
+        self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
+
+        # self.text = SpeechRecognition(self.bottomFrame)
+        # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
+
+        # weather
+        self.weather = Weather(self.topFrame)
+        self.weather.pack(side=LEFT, anchor=N, padx=100, pady=10)
+
+        # news
+        self.news = News(self.topFrame)
+        self.news.pack(side=BOTTOM, anchor=N, padx=100, pady=60)
 
             # calender
             # self.fr.get_matricule()
@@ -386,7 +395,7 @@ class FullscreenWindow:
 
             # self.facialRecognition()
             # self.speechRecognition()
-        nbr += 1
+
 
     def navigation(self):
         nav = Navigation()

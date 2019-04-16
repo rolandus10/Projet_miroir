@@ -11,9 +11,9 @@ Font_page = ("Courrier", 80)
 class Interface(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
-        interface = Frame(self, bg="Black")
+        interface = Frame(self, bg="Green")
         self.state = False
-        interface.pack(side=BOTTOM, fill="both", expand=YES)
+        interface.pack(fill="both", expand=YES)
         self.toggle_fullscreen()
         self.bind("<Escape>", self.end_fullscreen)
 
@@ -26,7 +26,6 @@ class Interface(Tk):
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame(PAE)
-
 
     def show_frame(self, page):
         frame = self.frames[page]
@@ -46,9 +45,8 @@ class Interface(Tk):
 class Navigation(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, bg="black")
-
         label = Label(self, text="Page de Navigation!", font=Font_page)
-        label.pack()
+        label.pack(expand=YES)
 
         menu = Frame(self, bg="green")
 
@@ -67,7 +65,7 @@ class PAE(Frame):
         Frame.__init__(self, parent, bg="black")
 
         label = Label(self, text="Page de PAE!", font=Font_page)
-        label.pack()
+        label.pack(expand=YES)
 
         menu =Frame(self, bg="green")
 
