@@ -1,0 +1,68 @@
+# les deux fonctions qui suivent servent à aller chercher les images et les id's correspondants dans les fichiers
+# la première prend toutes les photos et la seconde sélectionne les photos qui n'ont pas encore été utilisées par l'algo
+def trainer(directory):
+    """ crée une liste avec les chemin relatif des différentes images """
+    imagedirectorys = [os.path.join(directory, f) for f in os.listdir(directory)]
+    faces = []
+    IDs = []
+    # on parcours tous les utilisateurs
+    for dirs in os.listdir(directory):
+        with open(directory + '/' + dirs + '/fichier.txt', 'r') as mon_fichier:
+            contenu = mon_fichier.read()
+            pos1 = contenu.find(',numPict= ')
+            i = int(contenu[pos1 + len(',numPict= '):])
+
+        
+        with open(directory + '/' + dirs + '/trained.txt', 'w') as mon_fichier:
+            mon_fichier.write("id= {}, numPict= {}".format(dirs, i))
+    for subdir, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith('.jpg'):
+                imdirectory = os.path.join(subdir, file)
+                # faceImg est une image au format PIL ==> on doit la convertir en tableau(numpy array) car cv2 ne travail qu'avec des format numpy
+                faceImg = Image.open(imdirectory).convert('L')
+                faceNp = np.array(faceImg, 'uint8')
+                id = int(os.path.split(imdirectory)[-1].split('.')[1])
+                faces.append(faceNp)
+                IDs.append(id)
+    return np.array(IDs), faces
+
+def retrainer(directory):
+    """ crée une liste avec les chemin relatif des différentes images """
+    imagedirectorys = []
+    dir = directory
+    for f in os.listdir(directory):
+        directory = dir + '/' + f
+        if not os.path.exists(directory + '/trained.txt'):
+            with open(directory + '/trained.txt', 'w') as mon_fichier:
+                mon_fichier.write("id= {}, numPict= {}".format(f, 0))
+        with open(directory + '/trained.txt', 'r') as mon_fichier:
+            contenu = mon_fichier.read()
+        pos1 = contenu.find(', numPict= ')
+        numPicFinal = int(contenu[pos1 + len(', numPict= '):])
+        pos1 = contenu.find('id= ')
+        pos2 = contenu.find(', numPict= ')
+        idAdd = int(contenu[pos1 + len('id= '):pos2])
+        with open(directory + '/fichier.txt', 'r') as mon_fichier:
+            contenu = mon_fichier.read()
+        pos1 = contenu.find(',numPict= ')
+        i = int(contenu[pos1 + len(',numPict= '):])
+        if i != numPicFinal:
+            for fi in os.listdir(directory):
+                if fi.endswith('.jpg'):
+                    pos1 = fi.find('.' + str(idAdd) + '.')
+                    pos2 = fi.find('.jpg')
+                    numPic = int(fi[pos1 + len('.' + str(idAdd) + '.'):pos2])
+                    if numPic > numPicFinal:
+                        imagedirectorys.append(os.path.join(directory, fi))
+            with open(directory + '/trained.txt', 'w') as mon_fichier:
+                mon_fichier.write("id= {}, numPict= {}".format(idAdd, i))
+    faces = []
+    IDs = []
+    for imdirectory in imagedirectorys:
+        faceImg = Image.open(imdirectory).convert('L')
+        faceNp = np.array(faceImg, 'uint8')
+        id = int(os.path.split(imdirectory)[-1].split('.')[1])
+        faces.append(faceNp)
+        IDs.append(id)
+    return np.array(IDs), faces

@@ -1,0 +1,7 @@
+To add students in the data base :
+
+1) Put your excel files containing information in the folder "Excel_files"
+	NB : a file is named like : BA3_IG, BA2 or BA3_ELEC, ...
+	the bloc is to be added in the database to allow students to be registered in this bloc
+
+2) Execute "import_excel_data"
