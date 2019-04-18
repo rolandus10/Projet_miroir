@@ -27,6 +27,7 @@ class Interface(Tk):
 
         self.show_frame(PAE)
 
+
     def show_frame(self, page):
         frame = self.frames[page]
         frame.tkraise()

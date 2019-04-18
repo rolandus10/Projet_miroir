@@ -337,22 +337,14 @@ FONT_menu = ("Arial", 25)
 
 class FullscreenWindow:
     def __init__(self,tk):
+
         global myName
         nbr = 0
         if nbr == 0:
             # self.tk = Tk()
             self.tk = tk
             self.tk.configure(background='black')
-            self.menu = Frame(self.tk, bg="green")
-            self.menu.pack(side=BOTTOM)
-            self.navigation = Button(self.menu, text="Navigation", font=FONT_menu, command=self.navigation)
-            self.navigation.grid(row=0, column=0, sticky="nsew")
-            self.buttonAcceuil = Button(self.menu, text="Acceuil", font=FONT_menu, command=self.acceuil)
-            self.buttonAcceuil.grid(row=0, column=1, sticky="nsew")
-            self.activite = Button(self.menu, text="activite", font=FONT_menu, command=self.toggle_fullscreen)
-            self.activite.grid(row=0, column=2, sticky="nsew")
-            self.pae = Button(self.menu, text="Pae", font=FONT_menu, command=self.effacer)
-            self.pae.grid(row=0, column=3, sticky="nsew")
+
             self.state = False
             self.toggle_fullscreen()
             # self.end_fullscreen()
@@ -368,41 +360,64 @@ class FullscreenWindow:
             nbr += 1
 
 
+    def menuFrame(self):# affichage du menu
+
+        # effacer tout dans la fenetre avant l'affichage
+        for frame in self.tk.winfo_children():
+            frame.destroy()
+
+        menu = Frame(self.tk, bg="black")
+        menu.pack(side=BOTTOM)
+        navigation = Button(menu, text="Navigation", font=FONT_menu, command=self.navigation)
+        navigation.grid(row=0, column=0, sticky="nsew")
+        buttonAcceuil = Button(menu, text="Acceuil", font=FONT_menu, command=self.acceuil)
+        buttonAcceuil.grid(row=0, column=1, sticky="nsew")
+        activite = Button(menu, text="activite", font=FONT_menu, command=self.toggle_fullscreen)
+        activite.grid(row=0, column=2, sticky="nsew")
+        pae = Button(menu, text="Pae", font=FONT_menu)
+        pae.grid(row=0, column=3, sticky="nsew")
+
+
     def acceuil(self):
+
+        self.menuFrame()
+
 
         self.topFrame = Frame(self.tk, background='black')
         self.topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
 
-        # clock
+         # clock
         self.clock = Clock(self.topFrame)
         self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
 
         # self.text = SpeechRecognition(self.bottomFrame)
         # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
-
         # weather
         self.weather = Weather(self.topFrame)
         self.weather.pack(side=LEFT, anchor=N, padx=100, pady=10)
 
-        # news
+         # news
         self.news = News(self.topFrame)
         self.news.pack(side=BOTTOM, anchor=N, padx=100, pady=60)
+        # calender
+        # self.fr.get_matricule()
+        # self.calender = Calendar(self.bottomFrame)
+        # self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)
 
-            # calender
-            # self.fr.get_matricule()
-            # self.calender = Calendar(self.bottomFrame)
-            # self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)
-
-            # self.facialRecognition()
-            # self.speechRecognition()
+        # self.facialRecognition()
+        # self.speechRecognition()
 
 
     def navigation(self):
-        nav = Navigation()
 
-    def effacer(self):
-        self.topFrame.destroy()
-        Label(self.tk, text="Hello", font=FONT_menu).pack()
+        self.menuFrame()
+
+        nav = Navigation(self.tk)
+        nav.pack(side=TOP)
+
+
+
+
 
 
 
@@ -427,28 +442,44 @@ class FullscreenWindow:
         self.text = SpeechRecognition(self.bottomFrame)
         self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
 
+#class qui gere l'affichage des plans
+class Navigation(Frame):
+    def __init__(self, parent):
+        Frame.__init__(self, parent, bg="black")
+        self.topFrame = Frame(self, background='black')
+        self.topFrame.pack(side=TOP)
+        self.inputRecherche = Entry(self.topFrame, bd=1)
+        self.inputRecherche.grid(row=0, column=0, sticky=E)
+        self.recherche = Button(self.topFrame, text="Recherche", font=FONT_menu, command=self.recherche)
+        self.recherche.grid(row=0, column=1, sticky=W)
 
-class Navigation:
-    def __init__(self):
-        self.tk = Toplevel()
-        self.tk.configure(background='black')
-        self.topFrame = Frame(self.tk, background='black')
-        self.topFrame.pack(side=TOP, fill=BOTH, expand=YES)
-        self.menu = Frame(self.topFrame, bg="green")
-        self.menu.pack(side=BOTTOM,expand=YES)
-        self.navigation = Button(self.menu, text="Navigation", font=FONT_menu)
-        self.navigation.pack(side=RIGHT)
-        self.activite = Button(self.menu, text="Activite", font=FONT_menu, command=self.toggle_fullscreen)
-        self.activite.pack(side=RIGHT)
-        self.pae = Button(self.menu, text="Pae", font=FONT_menu)
-        self.pae.pack(side=RIGHT)
-        self.state = False
-        self.toggle_fullscreen()
+        self.dictionnaireDesPlans = {'auditoire 05': "plans/aud05.png",
+                                     'auditoire 11': "plans/aud11.1.PNG"}
 
-    def toggle_fullscreen(self, event=None):
-        self.state = not self.state  # Just toggling the boolean
-        self.tk.attributes("-fullscreen", self.state)
-        return "break"
+        cheminImage = "plans/etage0.PNG"
+        img2 = Image.open(cheminImage)
+        img2 = img2.resize((800, 600), Image.ANTIALIAS)
+        photo2 = ImageTk.PhotoImage(img2)
+        affiche = Label(self.topFrame, image=photo2)
+        affiche.image = photo2
+        affiche.grid(row=1, columnspan=2, pady=10)
+
+
+    def recherche(self):
+        # on recupère les informations du inputRecherche et on recherche le local dans dictionnaireDesPlans
+        # puis on affiche
+        local = self.inputRecherche.get()
+        plans = self.dictionnaireDesPlans
+
+        if local in plans:
+            cheminImage = plans[local]
+            img2 = Image.open(cheminImage)
+            img2 = img2.resize((800, 600), Image.ANTIALIAS)
+            photo2 = ImageTk.PhotoImage(img2)
+            affiche = Label(self.topFrame, image=photo2)
+            affiche.image = photo2
+            affiche.grid(row=1, columnspan=2, pady=10)
+
 
 
 
