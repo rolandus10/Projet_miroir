@@ -28,7 +28,7 @@ weather_unit = 'auto'  # see https://darksky.net/dev/docs/forecast for full list
 latitude = '50.4541'  # Set this if IP location lookup does not work for you (must be a string)
 longitude = '3.9523'  # Set this if IP location lookup does not work for you (must be a string)
 xlarge_text_size = 84
-large_text_size = 38
+large_text_size = 30
 medium_text_size = 18
 small_text_size = 38
 xsmall_text_size = 38
@@ -310,7 +310,7 @@ class News(Frame):
 
 class NewsHeadline(Frame):
     def __init__(self, parent, event_name=""):
-        Frame.__init__(self, parent, bg='black')
+        Frame.__init__(self, parent, bg='blue')
 
         image = Image.open("assets/Newspaper.png")
         image = image.resize((25, 25), Image.ANTIALIAS)
@@ -329,7 +329,7 @@ class NewsHeadline(Frame):
         if self.toPrint == True:
             self.iconLbl.pack(side=LEFT, anchor=N)
             self.eventName = event_name
-            self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', xsmall_text_size), fg="white",
+            self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', large_text_size), fg="white",
                                       bg="black")
             self.eventNameLbl.pack(side=LEFT, anchor=N)
 
@@ -369,12 +369,12 @@ class FullscreenWindow:
         menu = Frame(self.tk, bg="black")
         menu.pack(side=BOTTOM)
         navigation = Button(menu, text="Navigation", font=FONT_menu, command=self.navigation)
-        navigation.grid(row=0, column=0, sticky="nsew")
+        navigation.grid(row=0, column=1, sticky="nsew")
         buttonAcceuil = Button(menu, text="Acceuil", font=FONT_menu, command=self.acceuil)
-        buttonAcceuil.grid(row=0, column=1, sticky="nsew")
-        activite = Button(menu, text="activite", font=FONT_menu, command=self.toggle_fullscreen)
+        buttonAcceuil.grid(row=0, column=0,sticky="nsew")
+        activite = Button(menu, text="Activite", font=FONT_menu, command=self.activite)
         activite.grid(row=0, column=2, sticky="nsew")
-        pae = Button(menu, text="Pae", font=FONT_menu)
+        pae = Button(menu, text="Pae", font=FONT_menu, command=self.pae)
         pae.grid(row=0, column=3, sticky="nsew")
 
 
@@ -415,6 +415,36 @@ class FullscreenWindow:
         nav = Navigation(self.tk)
         nav.pack(side=TOP)
 
+
+    def pae(self):
+
+        self.menuFrame()
+
+        topFrame = Frame(self.tk, background='black')
+        topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+        cheminImage = "plans/paeBA1.png"
+        img2 = Image.open(cheminImage)
+        img2 = img2.resize((1000, 600), Image.ANTIALIAS)
+        photo2 = ImageTk.PhotoImage(img2)
+        affiche = Label(topFrame, image=photo2)
+        affiche.image = photo2
+        affiche.pack()
+
+    def activite(self):
+
+        self.menuFrame()
+
+        topFrame = Frame(self.tk, background='black')
+        topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+        cheminImage = "plans/activites.jpeg"
+        img2 = Image.open(cheminImage)
+        img2 = img2.resize((1000, 600), Image.ANTIALIAS)
+        photo2 = ImageTk.PhotoImage(img2)
+        affiche = Label(topFrame, image=photo2)
+        affiche.image = photo2
+        affiche.pack()
 
 
 
