@@ -484,9 +484,12 @@ class Navigation(Frame):
         self.recherche.grid(row=0, column=1, sticky=W)
 
         self.dictionnaireDesPlans = {'auditoire 05': "plans/aud05.png",
-                                     'auditoire 11': "plans/aud11.1.PNG"}
+                                     'auditoire 11': "plans/aud11.1.PNG",
+                                     'auditoire 25': "plans/aud25.1.PNG",
+                                     'auditoire 23': "plans/aud23.1.PNG",
+                                     'auditoire 12': "plans/aud12.1.PNG"}
 
-        cheminImage = "plans/etage0.PNG"
+        cheminImage = "plans/aud12.0.PNG"
         img2 = Image.open(cheminImage)
         img2 = img2.resize((800, 600), Image.ANTIALIAS)
         photo2 = ImageTk.PhotoImage(img2)
