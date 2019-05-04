@@ -294,7 +294,7 @@ class News(Frame):
 
             for post in feed.entries[0:5]:
                 headline = NewsHeadline(self.headlinesContainer, post.title)
-                headline.pack(side=TOP, anchor=W)
+                headline.pack(side=TOP, anchor=W, fill=X)
 
 
 
@@ -306,7 +306,7 @@ class News(Frame):
 
 class NewsHeadline(Frame):
     def __init__(self, parent, event_name=""):
-        Frame.__init__(self, parent, bg='blue')
+        Frame.__init__(self, parent, bg='black')
 
         image = Image.open("assets/Newspaper.png")
         image = image.resize((25, 25), Image.ANTIALIAS)
@@ -325,7 +325,7 @@ class NewsHeadline(Frame):
         if self.toPrint == True:
             self.iconLbl.pack(side=LEFT, anchor=N)
             self.eventName = event_name
-            self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', large_text_size), fg="white",
+            self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', medium_text_size), fg="white",
                                       bg="black")
             self.eventNameLbl.pack(side=LEFT, anchor=N)
 
