@@ -7,21 +7,21 @@ else:
     from pdfminer.pdfpage import PDFPage
 
 
-from pdfminer.pdfparser import PDFParser
-from pdfminer.pdfinterp import PDFResourceManager
-from pdfminer.pdfinterp import PDFPageInterpreter as PI
-from pdfminer.layout import LAParams
-from pdfminer.converter import TextConverter
+from pdfminer3.pdfparser import PDFParser
+from pdfminer3.pdfinterp import PDFResourceManager
+from pdfminer3.pdfinterp import PDFPageInterpreter as PI
+from pdfminer3.layout import LAParams
+from pdfminer3.converter import TextConverter
 # the internal API has changed between versions upstream,
 # allow both here..
 try:
     from pdfminer.pdfparser import PDFDocument
 except ImportError:
-    from pdfminer.pdfdocument import PDFDocument
+    from pdfminer3.pdfdocument import PDFDocument
 try:
     from pdfminer.pdfparser import PDFPage
 except ImportError:
-    from pdfminer.pdfpage import PDFPage
+    from pdfminer3.pdfpage import PDFPage
 import utils
 
 __all__ = ['PDF']

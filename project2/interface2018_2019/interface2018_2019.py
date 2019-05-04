@@ -2,6 +2,8 @@
 
 from tkinter import *
 import locale
+import speech_recognition as sr
+import re
 import datetime
 import time
 import threading
@@ -12,6 +14,7 @@ import json
 import sys
 import os
 import feedparser
+from threading import Thread
 from PIL import Image, ImageTk
 
 from PIL import Image, ImageTk
@@ -356,97 +359,40 @@ class FullscreenWindow:
             # myName=self.fr.get_nom(mat)
             # myName=myName.lower().capitalize()
 
-            self.acceuil()
+            self.accueil()
+
+            speak = SpeechReconignition(self.tk)
+            speak.start()
             nbr += 1
 
 
-    def menuFrame(self):# affichage du menu
+    def accueil(self):
 
-        # effacer tout dans la fenetre avant l'affichage
-        for frame in self.tk.winfo_children():
-            frame.destroy()
-
-        menu = Frame(self.tk, bg="black")
-        menu.pack(side=BOTTOM)
-        navigation = Button(menu, text="Navigation", font=FONT_menu, command=self.navigation)
-        navigation.grid(row=0, column=1, sticky="nsew")
-        buttonAcceuil = Button(menu, text="Acceuil", font=FONT_menu, command=self.acceuil)
-        buttonAcceuil.grid(row=0, column=0,sticky="nsew")
-        activite = Button(menu, text="Activite", font=FONT_menu, command=self.activite)
-        activite.grid(row=0, column=2, sticky="nsew")
-        pae = Button(menu, text="Pae", font=FONT_menu, command=self.pae)
-        pae.grid(row=0, column=3, sticky="nsew")
+        pageAccueil = Accueil(self.tk)
+        pageAccueil.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
 
 
-    def acceuil(self):
 
-        self.menuFrame()
-
-
-        self.topFrame = Frame(self.tk, background='black')
-        self.topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
-
-         # clock
-        self.clock = Clock(self.topFrame)
-        self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
-
-        # self.text = SpeechRecognition(self.bottomFrame)
-        # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
-        # weather
-        self.weather = Weather(self.topFrame)
-        self.weather.pack(side=LEFT, anchor=N, padx=100, pady=10)
-
-         # news
-        self.news = News(self.topFrame)
-        self.news.pack(side=BOTTOM, anchor=N, padx=100, pady=60)
-        # calender
-        # self.fr.get_matricule()
-        # self.calender = Calendar(self.bottomFrame)
-        # self.calender.pack(side = RIGHT, anchor=S, padx=100, pady=60)
-
-        # self.facialRecognition()
-        # self.speechRecognition()
 
 
     def navigation(self):
-
-        self.menuFrame()
 
         nav = Navigation(self.tk)
         nav.pack(side=TOP)
 
 
+
+
     def pae(self):
 
-        self.menuFrame()
+        pagePae = Pae(self.tk)
+        pagePae.pack(side=TOP)
 
-        topFrame = Frame(self.tk, background='black')
-        topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
-
-        cheminImage = "plans/paeBA1.png"
-        img2 = Image.open(cheminImage)
-        img2 = img2.resize((1000, 600), Image.ANTIALIAS)
-        photo2 = ImageTk.PhotoImage(img2)
-        affiche = Label(topFrame, image=photo2)
-        affiche.image = photo2
-        affiche.pack()
 
     def activite(self):
 
-        self.menuFrame()
-
-        topFrame = Frame(self.tk, background='black')
-        topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
-
-        cheminImage = "plans/activites.jpeg"
-        img2 = Image.open(cheminImage)
-        img2 = img2.resize((1000, 600), Image.ANTIALIAS)
-        photo2 = ImageTk.PhotoImage(img2)
-        affiche = Label(topFrame, image=photo2)
-        affiche.image = photo2
-        affiche.pack()
-
-
+        pageActivite = Activite(self.tk)
+        pageActivite.pack(side=TOP)
 
 
 
@@ -472,10 +418,129 @@ class FullscreenWindow:
         self.text = SpeechRecognition(self.bottomFrame)
         self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
 
+
+
+#classe qui affiche la vue du pae
+class Pae(Frame):
+    def __init__(self, parent):
+
+        self.menuFrame = Menu(parent)
+        self.menuFrame.pack(side=BOTTOM)
+
+        Frame.__init__(self, parent, bg="black")
+
+
+        cheminImage = "plans/pae.png"
+        img2 = Image.open(cheminImage)
+        img2 = img2.resize((1000, 600), Image.ANTIALIAS)
+        photo2 = ImageTk.PhotoImage(img2)
+        affiche = Label(self, image=photo2)
+        affiche.image = photo2
+        affiche.pack()
+
+
+
+
+#classe qui affiche la vue des les activités
+class Activite(Frame):
+    def __init__(self, parent):
+
+        self.menuFrame = Menu(parent)
+        self.menuFrame.pack(side=BOTTOM)
+
+        Frame.__init__(self, parent, bg="black")
+
+
+        topFrame = Frame(self, background='black')
+        topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+        cheminImage = "plans/activites2.png"
+        img2 = Image.open(cheminImage)
+        img2 = img2.resize((1000, 600), Image.ANTIALIAS)
+        photo2 = ImageTk.PhotoImage(img2)
+        affiche = Label(topFrame, image=photo2)
+        affiche.image = photo2
+        affiche.pack()
+
+
+
+#classe qui affiche la vue de l'accueil
+class Accueil(Frame):
+    def __init__(self, parent):
+
+        self.menuFrame = Menu(parent)
+        self.menuFrame.pack(side=BOTTOM)
+
+        Frame.__init__(self, parent, bg="black")
+
+        # clock
+        self.clock = Clock(self)
+        self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
+
+        # self.text = SpeechRecognition(self.bottomFrame)
+        # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
+        # weather
+        self.weather = Weather(self)
+        self.weather.pack(side=LEFT, anchor=N, padx=100, pady=10)
+
+        # news
+        self.news = News(self)
+        self.news.pack(side=BOTTOM, anchor=N, padx=100, pady=60)
+
+
+
+#class qui affiche le menu
+class Menu(Frame):
+    def __init__(self, parent):
+
+        for frame in parent.winfo_children():
+            frame.destroy()
+
+        Frame.__init__(self, parent, bg="black")
+        self.parent = parent
+
+        buttonNavigation = Button(self, text="Navigation", font=FONT_menu, command=self.navigation)
+        buttonNavigation.grid(row=0, column=1, sticky="nsew", pady=25)
+        buttonAcceuil = Button(self, text="Acceuil", font=FONT_menu, command=self.accueil)
+        buttonAcceuil.grid(row=0, column=0, sticky="nsew", pady=25)
+        activite = Button(self, text="Activite", font=FONT_menu, command=self.activite)
+        activite.grid(row=0, column=2, sticky="nsew", pady=25)
+        buttonPae = Button(self, text="Pae", font=FONT_menu, command=self.pae)
+        buttonPae.grid(row=0, column=3, sticky="nsew", pady=25)
+
+    #affichage de la vue de navigation
+    def navigation(self):
+        nav = Navigation(self.parent)
+        nav.pack(side=TOP)
+
+    # affichage de la vue de accueil
+    def accueil(self):
+        pageNavigation = Accueil(self.parent)
+        pageNavigation.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+    # affichage de la vue de activite
+    def activite(self):
+        pageActivite = Activite(self.parent)
+        pageActivite.pack(side=TOP)
+
+    # affichage de la vue de pae
+    def pae(self):
+        pagePae = Pae(self.parent)
+        pagePae.pack(side=TOP)
+
+
+
 #class qui gere l'affichage des plans
 class Navigation(Frame):
     def __init__(self, parent):
+
+        self.menuFrame = Menu(parent)
+        self.menuFrame.pack(side=BOTTOM)
+
         Frame.__init__(self, parent, bg="black")
+
+
+
         self.topFrame = Frame(self, background='black')
         self.topFrame.pack(side=TOP)
         self.inputRecherche = Entry(self.topFrame, bd=1)
@@ -497,11 +562,20 @@ class Navigation(Frame):
         affiche.image = photo2
         affiche.grid(row=1, columnspan=2, pady=10)
 
-
     def recherche(self):
         # on recupère les informations du inputRecherche et on recherche le local dans dictionnaireDesPlans
         # puis on affiche
         local = self.inputRecherche.get()
+
+        self.recherche_vocale(local)
+
+
+
+    def recherche_vocale(self, auditoire):
+        # on recherche auditoire dans dictionnaireDesPlans
+        # puis on affiche
+
+        local = auditoire
         plans = self.dictionnaireDesPlans
 
         if local in plans:
@@ -514,6 +588,163 @@ class Navigation(Frame):
             affiche.grid(row=1, columnspan=2, pady=10)
 
 
+
+
+class SpeechReconignition(Thread):
+    def __init__(self, Frame):
+        Thread.__init__(self)
+        self.frame = Frame
+
+        self.navigator = ""
+        myName = "patrick"
+        snowWhite = False
+        misUnderstood = False
+        tl = 2  # for little sentences
+        tL = 5  # for long sentences
+        t = tl  # default configuration
+        self.r = sr.Recognizer()
+
+    # answer function
+    def answer(self, toSay, t_stop=tl):
+        """" print and say the 'toSay' variable and can modify time pause"""
+        print(toSay)
+        # execute_command(toSay)
+        global t
+        t = t_stop
+
+    def run(self): # commencer l'ecoute
+        discuss = True
+        with sr.Microphone(sample_rate=32000) as source:
+
+            while (discuss == True):
+                # obtain audio from the microphone
+                print("...")  # to show he wait something from you
+                audio = self.r.listen(source, 4, 6)  # slowwwww
+                print("..")  # to show he has recorded your demande
+
+                try:
+                    message = self.r.recognize_google(audio, language="fr-FR")
+                    # print("Vous : " + message )
+                    del audio
+                except sr.UnknownValueError:
+                    self.answer("Je n'ai pas compris, pouvez-vous répéter ?", 3.5)
+                    message = ""
+                    # misUnderstood = True
+                except sr.RequestError as e:
+                    print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
+                    message = ""
+                    # search if the answer exists
+                if (re.search("auditoire 24 merci", message) or re.search("24 merci", message)):
+                    self.answer("ok 24")
+                    self.navigator = "auditoire 24"
+                    print(self.navigator)
+                    nav = Navigation(self.frame)
+                    nav.recherche_vocale(self.navigator)
+                    nav.pack(side=TOP)
+
+                elif (re.search("auditoire 11 merci", message) or re.search("11 merci", message)):
+                    self.answer("ok 11")
+                    self.navigator = "auditoire 11"
+                    print(self.navigator)
+                    nav = Navigation(self.frame)
+                    nav.recherche_vocale(self.navigator)
+                    nav.pack(side=TOP)
+
+                elif (re.search("auditoire 12 merci", message) or re.search("12 merci", message)):
+                    self.answer("ok 12")
+                    self.navigator = "auditoire 12"
+                    print(self.navigator)
+                    nav = Navigation(self.frame)
+                    nav.recherche_vocale(self.navigator)
+                    nav.pack(side=TOP)
+
+                elif (re.search("auditoire 23 merci", message) or re.search("23 merci", message)):
+                    self.answer("ok 23")
+                    self.navigator = "auditoire 23"
+                    print(self.navigator)
+                    nav = Navigation(self.frame)
+                    nav.recherche_vocale(self.navigator)
+                    nav.pack(side=TOP)
+
+                elif (re.search("c'est gentil", message) or re.search("c'est ok", message)):
+                    self.answer("A bientôt {} !".format(myName))
+                    discuss = False
+
+                elif (re.search("auditoire 25 merci", message) or re.search("25 merci", message)):
+                    self.answer("ok 25")
+                    self.navigator = "auditoire 25"
+                    print(self.navigator)
+                    nav = Navigation(self.frame)
+                    nav.recherche_vocale(self.navigator)
+                    nav.pack(side=TOP)
+
+
+                elif (re.search("auditoire 05 merci", message)
+                      or re.search("5 merci", message)
+                      or re.search("05 merci", message)):
+                    self.answer("ok 05")
+                    self.navigator = "auditoire 05"
+                    print(self.navigator)
+                    nav = Navigation(self.frame)
+                    nav.recherche_vocale(self.navigator)
+                    nav.pack(side=TOP)
+
+                elif (re.search("hall d'entrer merci", message) or re.search("secrétariat des étudiants merci",
+                                                                             message)):
+                    self.answer("vous y êtes")
+
+                elif (re.search("accueil merci", message)):
+                    self.answer("acceuil ok")
+                    self.navigator = "accueil"
+                    accueil = Accueil(self.frame)
+                    accueil.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+
+                    print(self.navigator)
+
+                elif (re.search("activité merci", message)):
+                    self.answer("activité ok")
+                    self.navigator = "activite"
+
+                    activitePage = Activite(self.frame)
+                    activitePage.pack(side=TOP)
+
+                    print(self.navigator)
+
+
+                elif (re.search("navigation merci", message)):
+                    self.answer("ok")
+                    self.navigator = "navigation"
+                    print(self.navigator)
+                    nav = Navigation(self.frame)
+                    nav.pack(side=TOP)
+
+
+
+                elif (re.search("programme des études merci", message)):
+
+
+                    paePage = Pae(self.frame)
+                    paePage.pack(side=TOP)
+
+                    self.answer("pae ok")
+                    self.navigator = "pae"
+                    print(self.navigator)
+
+
+
+            #     else:
+            #         if (misUnderstood == True):
+            #             misUnderstood = False
+            #         else:
+            #             t = 0
+            # # to avoid him listening to himself
+            # time.sleep(t)  # stop execution
+            # t = tl  # reset stop time
+
+
+
+        os.system("pause")
 
 
 ##if __name__ == '__main__':
