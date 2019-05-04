@@ -436,7 +436,7 @@ class Pae(Frame):
         photo2 = ImageTk.PhotoImage(img2)
         affiche = Label(self, image=photo2)
         affiche.image = photo2
-        affiche.pack(pady=30)
+        affiche.pack(pady=150)
 
 
 
@@ -460,7 +460,7 @@ class Activite(Frame):
         photo2 = ImageTk.PhotoImage(img2)
         affiche = Label(topFrame, image=photo2)
         affiche.image = photo2
-        affiche.pack(pady=30)
+        affiche.pack(pady=150)
 
 
 
@@ -475,17 +475,17 @@ class Accueil(Frame):
 
         # clock
         self.clock = Clock(self)
-        self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
+        self.clock.pack(side=RIGHT, anchor=N)
 
         # self.text = SpeechRecognition(self.bottomFrame)
         # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
         # weather
         self.weather = Weather(self)
-        self.weather.pack(side=LEFT, anchor=N, padx=100, pady=10)
+        self.weather.pack(side=LEFT, anchor=N)
 
         # news
         self.news = News(self)
-        self.news.pack(side=BOTTOM, anchor=N, padx=100, pady=60)
+        self.news.pack(side=BOTTOM, anchor=N)
 
 
 
