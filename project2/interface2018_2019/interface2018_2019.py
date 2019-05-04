@@ -30,13 +30,13 @@ weather_lang = 'fr'  # see https://darksky.net/dev/docs/forecast for full list o
 weather_unit = 'auto'  # see https://darksky.net/dev/docs/forecast for full list of unit parameters values
 latitude = '50.4541'  # Set this if IP location lookup does not work for you (must be a string)
 longitude = '3.9523'  # Set this if IP location lookup does not work for you (must be a string)
-xlarge_text_size = 84
-large_text_size = 30
-medium_text_size = 18
-small_text_size = 38
-xsmall_text_size = 38
-tiny_text_size = 1
-counterMax = 10
+xlarge_text_size = 94
+large_text_size = 48
+medium_text_size = 28
+small_text_size = 18
+xsmall_text_size = 14
+tiny_text_size = 11
+counterMax=10
 
 myName = "Inconnu"
 mat = 1
@@ -475,17 +475,17 @@ class Accueil(Frame):
 
         # clock
         self.clock = Clock(self)
-        self.clock.pack(side=RIGHT, anchor=N)
+        self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
 
         # self.text = SpeechRecognition(self.bottomFrame)
         # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
         # weather
         self.weather = Weather(self)
-        self.weather.pack(side=LEFT, anchor=N)
+        self.weather.pack(side=LEFT, anchor=N, padx=50, pady=30)
 
         # news
         self.news = News(self)
-        self.news.pack(side=BOTTOM, anchor=N)
+        self.news.pack(side=BOTTOM, anchor=S, padx=50, pady=30)
 
 
 
