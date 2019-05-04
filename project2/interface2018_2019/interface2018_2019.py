@@ -31,11 +31,11 @@ weather_unit = 'auto'  # see https://darksky.net/dev/docs/forecast for full list
 latitude = '50.4541'  # Set this if IP location lookup does not work for you (must be a string)
 longitude = '3.9523'  # Set this if IP location lookup does not work for you (must be a string)
 xlarge_text_size = 94
-large_text_size = 48
-medium_text_size = 28
-small_text_size = 18
-xsmall_text_size = 14
-tiny_text_size = 11
+large_text_size = 60
+medium_text_size = 30
+small_text_size = 20
+xsmall_text_size = 15
+tiny_text_size = 13
 counterMax=10
 
 myName = "Inconnu"
@@ -325,7 +325,7 @@ class NewsHeadline(Frame):
         if self.toPrint == True:
             self.iconLbl.pack(side=LEFT, anchor=N)
             self.eventName = event_name
-            self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', medium_text_size), fg="white",
+            self.eventNameLbl = Label(self, text=self.eventName, font=('Helvetica', tiny_text_size), fg="white",
                                       bg="black")
             self.eventNameLbl.pack(side=LEFT, anchor=N)
 
@@ -429,7 +429,7 @@ class Pae(Frame):
         photo2 = ImageTk.PhotoImage(img2)
         affiche = Label(self, image=photo2)
         affiche.image = photo2
-        affiche.pack(pady=150)
+        affiche.pack(pady=30)
 
 
 
@@ -453,7 +453,7 @@ class Activite(Frame):
         photo2 = ImageTk.PhotoImage(img2)
         affiche = Label(topFrame, image=photo2)
         affiche.image = photo2
-        affiche.pack(pady=150)
+        affiche.pack(pady=30)
 
 
 
