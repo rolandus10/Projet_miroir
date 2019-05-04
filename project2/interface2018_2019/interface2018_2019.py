@@ -292,16 +292,9 @@ class News(Frame):
 
             feed = feedparser.parse(headlines_url)
 
-            if horaire:
-                pEvent, otherEvents = giveSchedule(mat)
-                for event in otherEvents:
-                    headline = NewsHeadline(self.headlinesContainer, event)
-                    headline.pack(side=TOP, anchor=W)
-
-            else:
-                for post in feed.entries[0:5]:
-                    headline = NewsHeadline(self.headlinesContainer, post.title)
-                    headline.pack(side=TOP, anchor=W)
+            for post in feed.entries[0:5]:
+                headline = NewsHeadline(self.headlinesContainer, post.title)
+                headline.pack(side=TOP, anchor=W)
 
 
 
@@ -485,7 +478,7 @@ class Accueil(Frame):
 
         # news
         self.news = News(self)
-        self.news.pack(side=BOTTOM, anchor=S, padx=50, pady=30)
+        self.news.pack(side=BOTTOM, fill=X, anchor=S, padx=50, pady=30)
 
 
 
