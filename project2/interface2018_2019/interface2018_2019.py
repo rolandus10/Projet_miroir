@@ -478,7 +478,7 @@ class Accueil(Frame):
 
         # news
         self.news = News(self)
-        self.news.pack(side=BOTTOM, fill=X, anchor=S, padx=50, pady=30)
+        self.news.pack(side=BOTTOM, fill=BOTH, anchor=S, padx=50, pady=30)
 
 
 
