@@ -436,7 +436,7 @@ class Pae(Frame):
         photo2 = ImageTk.PhotoImage(img2)
         affiche = Label(self, image=photo2)
         affiche.image = photo2
-        affiche.pack()
+        affiche.pack(pady=30)
 
 
 
@@ -460,7 +460,7 @@ class Activite(Frame):
         photo2 = ImageTk.PhotoImage(img2)
         affiche = Label(topFrame, image=photo2)
         affiche.image = photo2
-        affiche.pack()
+        affiche.pack(pady=30)
 
 
 
@@ -500,13 +500,13 @@ class Menu(Frame):
         self.parent = parent
 
         buttonNavigation = Button(self, text="Navigation", font=FONT_menu, command=self.navigation)
-        buttonNavigation.grid(row=0, column=1, sticky="nsew", pady=25)
+        buttonNavigation.grid(row=0, column=1, sticky="nsew", pady=30)
         buttonAcceuil = Button(self, text="Acceuil", font=FONT_menu, command=self.accueil)
-        buttonAcceuil.grid(row=0, column=0, sticky="nsew", pady=25)
+        buttonAcceuil.grid(row=0, column=0, sticky="nsew", pady=30)
         activite = Button(self, text="Activite", font=FONT_menu, command=self.activite)
-        activite.grid(row=0, column=2, sticky="nsew", pady=25)
+        activite.grid(row=0, column=2, sticky="nsew", pady=30)
         buttonPae = Button(self, text="Pae", font=FONT_menu, command=self.pae)
-        buttonPae.grid(row=0, column=3, sticky="nsew", pady=25)
+        buttonPae.grid(row=0, column=3, sticky="nsew", pady=30)
 
     #affichage de la vue de navigation
     def navigation(self):
@@ -560,7 +560,7 @@ class Navigation(Frame):
         photo2 = ImageTk.PhotoImage(img2)
         affiche = Label(self.topFrame, image=photo2)
         affiche.image = photo2
-        affiche.grid(row=1, columnspan=2, pady=10)
+        affiche.grid(row=1, columnspan=2, pady=30)
 
     def recherche(self):
         # on recupère les informations du inputRecherche et on recherche le local dans dictionnaireDesPlans
@@ -585,7 +585,7 @@ class Navigation(Frame):
             photo2 = ImageTk.PhotoImage(img2)
             affiche = Label(self.topFrame, image=photo2)
             affiche.image = photo2
-            affiche.grid(row=1, columnspan=2, pady=10)
+            affiche.grid(row=1, columnspan=2, pady=30)
 
 
 
