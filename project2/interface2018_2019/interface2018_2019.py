@@ -4,6 +4,7 @@ from tkinter import *
 import locale
 import speech_recognition as sr
 import re
+import cv2
 import datetime
 import time
 import threading
@@ -15,6 +16,7 @@ import sys
 import os
 import feedparser
 from threading import Thread
+#import speak
 from PIL import Image, ImageTk
 
 from PIL import Image, ImageTk
@@ -37,6 +39,7 @@ small_text_size = 20
 xsmall_text_size = 15
 tiny_text_size = 13
 counterMax=10
+lang ="fr-FR"
 
 myName = "Inconnu"
 mat = 1
@@ -352,12 +355,17 @@ class FullscreenWindow:
             # myName=self.fr.get_nom(mat)
             # myName=myName.lower().capitalize()
 
-            self.accueil()
+            self.welcome()
 
-            speak = SpeechReconignition(self.tk)
-            speak.start()
+
             nbr += 1
 
+    def welcome(self):
+        welcome = Welcome(self.tk)
+        welcome.pack(pady=300)
+
+        detection = FaceDetect(self.tk)
+        detection.start()
 
     def accueil(self):
 
@@ -413,6 +421,52 @@ class FullscreenWindow:
 
 
 
+
+
+class FaceDetect(Thread):
+    def __init__(self,Frame):
+        Thread.__init__(self)
+        self.frame = Frame
+
+    def run(self):
+        # le fichier haarcascade_frontalface_default.xml doit être dans le dossier où est sauvegardé le code
+        faceDetec = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+        # 0 correspond en général à la webcam si ça ne marche pas il faut tester d'autres numéros
+        cam = cv2.VideoCapture(0)
+
+        i = False
+        while (i == False):
+            ret, img = cam.read()
+            # img est une image en couleur
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            # détection de visage
+            faces = faceDetec.detectMultiScale(gray, 1.3, 10)
+
+            nombre_face = len(faces)
+
+            if nombre_face > 0:
+                i = True
+                cam.release()
+
+        #speak.tts("bienvenue", lang)
+
+        accueil = Accueil(self.frame)
+        accueil.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+        speech = SpeechReconignition(self.frame)
+        speech.start()
+
+
+
+
+
+
+
+
+
+
+
 #classe qui affiche la vue du pae
 class Pae(Frame):
     def __init__(self, parent):
@@ -430,6 +484,8 @@ class Pae(Frame):
         affiche = Label(self, image=photo2)
         affiche.image = photo2
         affiche.pack(pady=30)
+        #speak.tts("P A E", lang)
+
 
 
 
@@ -454,6 +510,7 @@ class Activite(Frame):
         affiche = Label(topFrame, image=photo2)
         affiche.image = photo2
         affiche.pack(pady=30)
+        #speak.tts("Activité", lang)
 
 
 
@@ -465,6 +522,10 @@ class Accueil(Frame):
         self.menuFrame.pack(side=BOTTOM)
 
         Frame.__init__(self, parent, bg="black")
+
+        self.parent = parent
+
+
 
         # clock
         self.clock = Clock(self)
@@ -479,6 +540,14 @@ class Accueil(Frame):
         # news
         self.news = News(self)
         self.news.pack(side=BOTTOM, fill=BOTH, anchor=S, padx=50, pady=30)
+
+        #self.parent.after(3000, self.welcome)
+
+    def welcome(self):
+        wel = Welcome(self.parent)
+        wel.pack(pady=300)
+
+        #speak.tts("Accueil", lang)
 
 
 
@@ -554,6 +623,7 @@ class Navigation(Frame):
         affiche = Label(self.topFrame, image=photo2)
         affiche.image = photo2
         affiche.grid(row=1, columnspan=2, pady=30)
+        #speak.tts("Navigation", lang)
 
     def recherche(self):
         # on recupère les informations du inputRecherche et on recherche le local dans dictionnaireDesPlans
@@ -581,12 +651,34 @@ class Navigation(Frame):
             affiche.grid(row=1, columnspan=2, pady=30)
 
 
+#classe qui affiche la page Bienvenu
+class Welcome(Frame):
+    def __init__(self, parent):
+        self.menuFrame = Menu(parent)
+        #self.menuFrame.pack(side=BOTTOM)
+
+        Frame.__init__(self, parent, bg="black")
+
+        topFrame = Frame(self, background='black')
+        topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
+
+        message="BIENVENUE A POLYTECH UMONS !"
+
+        messageLabel = Label(topFrame, text=message, font=('Helvetica', large_text_size),  fg="white",
+                              bg="black")
+        messageLabel.pack()
+
+        #speak.tts("Bienvenu au miroir intelligent de l'école polytechnique de l'université de  Mons", lang)
 
 
+
+
+#classe qui gère la navigation vocale
 class SpeechReconignition(Thread):
     def __init__(self, Frame):
         Thread.__init__(self)
         self.frame = Frame
+        self.discuss = True
 
         self.navigator = ""
         myName = "patrick"
@@ -605,20 +697,36 @@ class SpeechReconignition(Thread):
         global t
         t = t_stop
 
+
+    def welcome(self): # utilisé pour arreter le thread et afficher la page de bienvenu
+
+        self.discuss = False
+
+        welcome = Welcome(self.frame)
+        welcome.pack(pady=300)
+
+        detection = FaceDetect(self.frame)
+        detection.start()
+
+
     def run(self): # commencer l'ecoute
-        discuss = True
+
         with sr.Microphone(sample_rate=32000) as source:
 
-            while (discuss == True):
-                # obtain audio from the microphone
-                print("...")  # to show he wait something from you
-                audio = self.r.listen(source, 4, 6)  # slowwwww
-                print("..")  # to show he has recorded your demande
-
+            while (self.discuss == True):
                 try:
+                    # obtain audio from the microphone
+                    print("...")  # to show he wait something from you
+                    audio = self.r.listen(source, 4, 6)  # slowwwww
+                    print("..")  # to show he has recorded your demande
                     message = self.r.recognize_google(audio, language="fr-FR")
                     # print("Vous : " + message )
                     del audio
+
+                except sr.WaitTimeoutError as ve:
+                    message = ""
+                    print(ve)
+
                 except sr.UnknownValueError:
                     self.answer("Je n'ai pas compris, pouvez-vous répéter ?", 3.5)
                     message = ""
@@ -635,6 +743,7 @@ class SpeechReconignition(Thread):
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
 
+
                 elif (re.search("auditoire 11 merci", message) or re.search("11 merci", message)):
                     self.answer("ok 11")
                     self.navigator = "auditoire 11"
@@ -642,6 +751,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
+                    # direction = "prenez à votre droite ensuite montez jusqu'au premier étage, l'auditoire est sur votre gauche"
+                    # speak.tts(direction, lang)
 
                 elif (re.search("auditoire 12 merci", message) or re.search("12 merci", message)):
                     self.answer("ok 12")
@@ -650,6 +761,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
+                    # direction = "prenez à votre droite ensuite montez jusqu'au premier étage puis tournez à droite, vous êtes arrivez"
+                    # speak.tts(direction, lang)
 
                 elif (re.search("auditoire 23 merci", message) or re.search("23 merci", message)):
                     self.answer("ok 23")
@@ -658,6 +771,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
+                    # direction = "Prenez à votre droite jusqu'à l'escalier, montez jusqu'au deuxième étage puis faite quelques pas sur votre gauche l'auditoire se trouve à droite"
+                    # speak.tts(direction, lang)
 
                 elif (re.search("c'est gentil", message) or re.search("c'est ok", message)):
                     self.answer("A bientôt {} !".format(myName))
@@ -670,6 +785,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
+                    # direction = "comme indiquez sur le plan, prenez à votre gauche ensuite montez jusqu'au deuxième étage l'auditoire est face à vous légèrement à droite"
+                    # speak.tts(direction, lang)
 
 
                 elif (re.search("auditoire 05 merci", message)
@@ -681,6 +798,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
+                    # direction = "comme indiquer sur le plan prenez à votre droite jusqu'au IGLAB puis tournez à droite, la destination est à votre droite"
+                    # speak.tts(direction, lang)
 
                 elif (re.search("hall d'entrer merci", message) or re.search("secrétariat des étudiants merci",
                                                                              message)):
@@ -714,7 +833,8 @@ class SpeechReconignition(Thread):
 
 
 
-                elif (re.search("programme des études merci", message)):
+                elif (re.search("programme des études merci", message) or re.search("P A E merci",
+                                                                             message)):
 
 
                     paePage = Pae(self.frame)
