@@ -16,7 +16,7 @@ import sys
 import os
 import feedparser
 from threading import Thread
-#import speak
+import speak
 from PIL import Image, ImageTk
 
 from PIL import Image, ImageTk
@@ -449,7 +449,7 @@ class FaceDetect(Thread):
                 i = True
                 cam.release()
 
-        #speak.tts("bienvenue", lang)
+        speak.tts("bienvenue", lang)
 
         accueil = Accueil(self.frame)
         accueil.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
@@ -484,7 +484,7 @@ class Pae(Frame):
         affiche = Label(self, image=photo2)
         affiche.image = photo2
         affiche.pack(pady=30)
-        #speak.tts("P A E", lang)
+        speak.tts("P A E", lang)
 
 
 
@@ -510,7 +510,7 @@ class Activite(Frame):
         affiche = Label(topFrame, image=photo2)
         affiche.image = photo2
         affiche.pack(pady=30)
-        #speak.tts("Activité", lang)
+        speak.tts("Activité", lang)
 
 
 
@@ -547,7 +547,7 @@ class Accueil(Frame):
         wel = Welcome(self.parent)
         wel.pack(pady=300)
 
-        #speak.tts("Accueil", lang)
+        speak.tts("Accueil", lang)
 
 
 
@@ -623,7 +623,7 @@ class Navigation(Frame):
         affiche = Label(self.topFrame, image=photo2)
         affiche.image = photo2
         affiche.grid(row=1, columnspan=2, pady=30)
-        #speak.tts("Navigation", lang)
+        speak.tts("Navigation", lang)
 
     def recherche(self):
         # on recupère les informations du inputRecherche et on recherche le local dans dictionnaireDesPlans
@@ -668,7 +668,7 @@ class Welcome(Frame):
                               bg="black")
         messageLabel.pack()
 
-        #speak.tts("Bienvenu au miroir intelligent de l'école polytechnique de l'université de  Mons", lang)
+        speak.tts("Bienvenu au miroir intelligent de l'école polytechnique de l'université de  Mons", lang)
 
 
 
@@ -751,8 +751,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    # direction = "prenez à votre droite ensuite montez jusqu'au premier étage, l'auditoire est sur votre gauche"
-                    # speak.tts(direction, lang)
+                    direction = "prenez à votre droite ensuite montez jusqu'au premier étage, l'auditoire est sur votre gauche"
+                    speak.tts(direction, lang)
 
                 elif (re.search("auditoire 12 merci", message) or re.search("12 merci", message)):
                     self.answer("ok 12")
@@ -761,8 +761,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    # direction = "prenez à votre droite ensuite montez jusqu'au premier étage puis tournez à droite, vous êtes arrivez"
-                    # speak.tts(direction, lang)
+                    direction = "prenez à votre droite ensuite montez jusqu'au premier étage puis tournez à droite, vous êtes arrivez"
+                    speak.tts(direction, lang)
 
                 elif (re.search("auditoire 23 merci", message) or re.search("23 merci", message)):
                     self.answer("ok 23")
@@ -771,8 +771,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    # direction = "Prenez à votre droite jusqu'à l'escalier, montez jusqu'au deuxième étage puis faite quelques pas sur votre gauche l'auditoire se trouve à droite"
-                    # speak.tts(direction, lang)
+                    direction = "Prenez à votre droite jusqu'à l'escalier, montez jusqu'au deuxième étage puis faite quelques pas sur votre gauche l'auditoire se trouve à droite"
+                    speak.tts(direction, lang)
 
                 elif (re.search("c'est gentil", message) or re.search("c'est ok", message)):
                     self.answer("A bientôt {} !".format(myName))
@@ -785,8 +785,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    # direction = "comme indiquez sur le plan, prenez à votre gauche ensuite montez jusqu'au deuxième étage l'auditoire est face à vous légèrement à droite"
-                    # speak.tts(direction, lang)
+                    direction = "comme indiquez sur le plan, prenez à votre gauche ensuite montez jusqu'au deuxième étage l'auditoire est face à vous légèrement à droite"
+                    speak.tts(direction, lang)
 
 
                 elif (re.search("auditoire 05 merci", message)
@@ -798,8 +798,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    # direction = "comme indiquer sur le plan prenez à votre droite jusqu'au IGLAB puis tournez à droite, la destination est à votre droite"
-                    # speak.tts(direction, lang)
+                    direction = "comme indiquer sur le plan prenez à votre droite jusqu'au IGLAB puis tournez à droite, la destination est à votre droite"
+                    speak.tts(direction, lang)
 
                 elif (re.search("hall d'entrer merci", message) or re.search("secrétariat des étudiants merci",
                                                                              message)):
