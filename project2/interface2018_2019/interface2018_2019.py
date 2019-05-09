@@ -1,25 +1,32 @@
-"*********INTERFACE MIROIRE********"
+"---------------------------------------------------------------------------------------------------------------"
+"---------------------------------------------------------------------------------------------------------------"
+"-------------------------------- Interface Miroir Intelligent 2018-2019 ---------------------------------------"
+"---------------------------------------------------------------------------------------------------------------"
+"---------------------------------------------------------------------------------------------------------------"
+
+" Colaborateurs:  @GUY_ROLAND_KUE  @PATRICK_DJAKOU @ROSABELLE_LEKEMO  "
+
+" Ce projet à été developpé dans le cadre du projet informatique de BA3 IG de l'école polytechnique de l'Umons "
+
 
 from tkinter import *
+from PIL import Image, ImageTk
 import locale
 import speech_recognition as sr
 import re
 import cv2
-import datetime
 import time
 import threading
 from contextlib import contextmanager
 import traceback
 import requests
 import json
-import sys
 import os
 import feedparser
 from threading import Thread
 import speak
-from PIL import Image, ImageTk
 
-from PIL import Image, ImageTk
+
 
 LOCALE_LOCK = threading.Lock()
 
@@ -33,64 +40,57 @@ weather_unit = 'auto'  # see https://darksky.net/dev/docs/forecast for full list
 latitude = '50.4541'  # Set this if IP location lookup does not work for you (must be a string)
 longitude = '3.9523'  # Set this if IP location lookup does not work for you (must be a string)
 xlarge_text_size = 94
-large_text_size = 60
+large_text_size = 50
 medium_text_size = 30
 small_text_size = 20
 xsmall_text_size = 15
 tiny_text_size = 13
 counterMax=10
 lang ="fr-FR"
-
-myName = "Inconnu"
-mat = 1
-horaire = False
-w = None
-discuss = True
-
-tk = Tk()
+font_menu = ("Arial", 25)
 
 tl = 2  # for little sentences
 tL = 5  # for long sentences
 t = tl  # default configuration
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# -------------------------------- WEATHER -----------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-@contextmanager
-def setlocale(name):  # thread proof function to work with locale
-    with LOCALE_LOCK:
-        saved = locale.setlocale(locale.LC_ALL)
-        try:
-            yield locale.setlocale(locale.LC_ALL, name)
-        finally:
-            locale.setlocale(locale.LC_ALL, saved)
-
-
-# maps open weather icons to
-# icon reading is not impacted by the 'lang' parameter
-icon_lookup = {
-    'clear-day': "assets/Sun.png",  # clear sky day
-    'wind': "assets/Wind.png",  # wind
-    'cloudy': "assets/Cloud.png",  # cloudy day
-    'partly-cloudy-day': "assets/PartlySunny.png",  # partly cloudy day
-    'rain': "assets/Rain.png",  # rain day
-    'snow': "assets/Snow.png",  # snow day
-    'snow-thin': "assets/Snow.png",  # sleet day
-    'fog': "assets/Haze.png",  # fog day
-    'clear-night': "assets/Moon.png",  # clear sky night
-    'partly-cloudy-night': "assets/PartlyMoon.png",  # scattered clouds night
-    'thunderstorm': "assets/Storm.png",  # thunderstorm
-    'tornado': "assests/Tornado.png",  # tornado
-    'hail': "assests/Hail.png"  # hail
-}
-
+# classe qui permet d'afficher la météo dans une fenetre de type Frame
 
 class Weather(Frame):
+
     def __init__(self, parent, *args, **kwargs):
-        Frame.__init__(self, parent, bg='black')
+
+        # maps open weather icons to
+        # icon reading is not impacted by the 'lang' parameter
+        # dictionnaire des chemins d'acces d'icon de météo
+        self.icon_lookup = {
+            'clear-day': "assets/Sun.png",  # clear sky day
+            'wind': "assets/Wind.png",  # wind
+            'cloudy': "assets/Cloud.png",  # cloudy day
+            'partly-cloudy-day': "assets/PartlySunny.png",  # partly cloudy day
+            'rain': "assets/Rain.png",  # rain day
+            'snow': "assets/Snow.png",  # snow day
+            'snow-thin': "assets/Snow.png",  # sleet day
+            'fog': "assets/Haze.png",  # fog day
+            'clear-night': "assets/Moon.png",  # clear sky night
+            'partly-cloudy-night': "assets/PartlyMoon.png",  # scattered clouds night
+            'thunderstorm': "assets/Storm.png",  # thunderstorm
+            'tornado': "assests/Tornado.png",  # tornado
+            'hail': "assests/Hail.png"  # hail
+        }
         self.temperature = ''
         self.forecast = ''
         self.location = ''
         self.currently = ''
         self.icon = ''
+
+        # on initialise la frame d'affichage des données météos
+        Frame.__init__(self, parent, bg='black')
         self.degreeFrm = Frame(self, bg="black")
         self.degreeFrm.pack(side=TOP, anchor=W)
         self.temperatureLbl = Label(self.degreeFrm, font=('Helvetica', medium_text_size), fg="white", bg="black")
@@ -105,6 +105,8 @@ class Weather(Frame):
         # self.locationLbl.pack(side=TOP, anchor=W)
         self.get_weather()
 
+
+    # permet de récuperer un json en ligne et extraire l'ip pour récuperer les données méteos
     def get_ip(self):
         try:
             ip_url = "http://jsonip.com/"
@@ -115,6 +117,7 @@ class Weather(Frame):
             traceback.print_exc()
             return "Error: %s. Cannot get ip." % e
 
+    #récupère les données météos de l'API sous forme de fichier json et les formate pour l'affichage
     def get_weather(self):
         try:
 
@@ -149,8 +152,8 @@ class Weather(Frame):
             icon_id = weather_obj['currently']['icon']
             icon2 = None
 
-            if icon_id in icon_lookup:
-                icon2 = icon_lookup[icon_id]
+            if icon_id in self.icon_lookup:
+                icon2 = self.icon_lookup[icon_id]
 
             if icon2 is not None:
                 if self.icon != icon2:
@@ -191,14 +194,13 @@ class Weather(Frame):
     def convert_kelvin_to_fahrenheit(kelvin_temp):
         return 1.8 * (kelvin_temp - 273) + 32
 
-
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 # -------------------------------- TEXT --------------------------------
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 
-
+# classe permettant d'afficher des textes dans une frame en petit carractère
 class Text(Frame):
     def __init__(self, parent, text, *args, **kwargs):
         Frame.__init__(self, parent, *args, **kwargs)
@@ -207,9 +209,17 @@ class Text(Frame):
                                     bg="black")
         self.contentTextLbl.pack(side=LEFT, anchor=N)
 
+    # modifie le texte affiché
     def updateText(self, newText):
         self.contentTextLbl.config(text=newText)
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# -------------------------------- TEXT BIG ----------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+
+# classe permettant d'afficher des textes dans une frame en grand carractère
 
 class TextBig(Frame):
     def __init__(self, parent, text, *args, **kwargs):
@@ -219,10 +229,17 @@ class TextBig(Frame):
                                     bg="black")
         self.contentTextLbl.pack(side=LEFT, anchor=N)
 
+    # modifie le texte affiché
     def updateText(self, newText):
         self.contentTextLbl.config(text=newText)
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# -------------------------------- ClOCK -------------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
+# frame d'affichage de l'heure et de la date
 class Clock(Frame):
     def __init__(self, parent, *args, **kwargs):
         Frame.__init__(self, parent, bg='black')
@@ -241,8 +258,19 @@ class Clock(Frame):
         self.dateLbl.pack(side=TOP, anchor=E)
         self.tick()
 
+    # renvoie la localité
+    @contextmanager
+    def setlocale(self,name):  # thread proof function to work with locale
+        with LOCALE_LOCK:
+            saved = locale.setlocale(locale.LC_ALL)
+            try:
+                yield locale.setlocale(locale.LC_ALL, name)
+            finally:
+                locale.setlocale(locale.LC_ALL, saved)
+
+    # récupere l'heure et la date locale et met à jour l'affichage tous les 3 secondes
     def tick(self):
-        with setlocale(ui_locale):
+        with self.setlocale(ui_locale):
             if time_format == 12:
                 time2 = time.strftime('%I:%M %p')  # hour in 12h format
             else:
@@ -265,13 +293,13 @@ class Clock(Frame):
             # could use >200 ms, but display gets jerky
             self.timeLbl.after(30000, self.tick)
 
-
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 # ------------------------------- NEWS ---------------------------------
 # ----------------------------------------------------------------------
 # ----------------------------------------------------------------------
 
+# frame d'affichage des news
 class News(Frame):
     def __init__(self, parent, *args, **kwargs):
         Frame.__init__(self, parent, *args, **kwargs)
@@ -283,6 +311,8 @@ class News(Frame):
         self.headlinesContainer.pack(side=TOP)
         self.get_headlines()
 
+    # recupère les infos sous forme de json et affiche les grands titres
+    # met à jour les infos tous les 600s
     def get_headlines(self):
         try:
             # remove all children
@@ -299,14 +329,18 @@ class News(Frame):
                 headline = NewsHeadline(self.headlinesContainer, post.title)
                 headline.pack(side=TOP, anchor=W, fill=X)
 
-
-
         except Exception as e:
             traceback.print_exc()
 
         self.after(600000, self.get_headlines)
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- NEWS HEADLINE ------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
+# classe qui récupere et formate les infos pour l'affichage dans une frame
 class NewsHeadline(Frame):
     def __init__(self, parent, event_name=""):
         Frame.__init__(self, parent, bg='black')
@@ -332,107 +366,87 @@ class NewsHeadline(Frame):
                                       bg="black")
             self.eventNameLbl.pack(side=LEFT, anchor=N)
 
-FONT_menu = ("Arial", 25)
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- FULLSCREEN WINDOW --------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-class FullscreenWindow:
-    def __init__(self,tk):
+# classe qui gere l'affichage de l'interface ainsi que les interations avec l'utiliateur
+class FullscreenWindow():
+    def __init__(self):
+        self.fenetre_principale_tk = Tk()   # initialisation de la frame principale
+        self.fenetre_principale_tk.configure(background='black')
+        self.state = False   # bouleen pour le toggle du fullscreen
+        self.toggle_fullscreen()
 
-        global myName
-        nbr = 0
-        if nbr == 0:
-            # self.tk = Tk()
-            self.tk = tk
-            self.tk.configure(background='black')
+        # sortir du fullscreen par le clic sur la touche escape du clavier
+        self.fenetre_principale_tk.bind("<Escape>", self.end_fullscreen)
 
-            self.state = False
-            self.toggle_fullscreen()
-            # self.end_fullscreen()
-            # self.tk.bind("<Return>", self.toggle_fullscreen)
-            self.tk.bind("<Escape>", self.end_fullscreen)
-
-            # self.fr= FacialRecognition()
-            # mat = self.fr.get_matricule()
-            # myName=self.fr.get_nom(mat)
-            # myName=myName.lower().capitalize()
-
-            self.welcome()
+        self.welcome()
 
 
-            nbr += 1
-
+    # affichage de la page de bienvenue
     def welcome(self):
-        welcome = Welcome(self.tk)
+        welcome = Welcome(self.fenetre_principale_tk)
         welcome.pack(pady=300)
 
-        detection = FaceDetect(self.tk)
+        # lancement de la détection de visage
+        detection = FaceDetect(self.fenetre_principale_tk)
         detection.start()
 
+    # affichage de la page de accueil
     def accueil(self):
-
-        pageAccueil = Accueil(self.tk)
+        pageAccueil = Accueil(self.fenetre_principale_tk)
         pageAccueil.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
 
-
-
-
-
+    # affichage de la page d'acceuil
     def navigation(self):
 
-        nav = Navigation(self.tk)
+        nav = Navigation(self.fenetre_principale_tk)
         nav.pack(side=TOP)
 
-
-
-
+    # affichage de la page du PAE
     def pae(self):
-
-        pagePae = Pae(self.tk)
+        pagePae = Pae(self.fenetre_principale_tk)
         pagePae.pack(side=TOP)
 
-
+    # affichage de la vue des activitées
     def activite(self):
-
-        pageActivite = Activite(self.tk)
+        pageActivite = Activite(self.fenetre_principale_tk)
         pageActivite.pack(side=TOP)
 
-
-
-
-    def toggle_fullscreen(self, event=None):
+    # toggle du fullscreen
+    def toggle_fullscreen(self):
         self.state = not self.state  # Just toggling the boolean
-        self.tk.attributes("-fullscreen", self.state)
+        self.fenetre_principale_tk.attributes("-fullscreen", self.state)
         return "break"
 
-    def end_fullscreen(self, event=None):
+    # sortir du fullscreen
+    def end_fullscreen(self):
         self.state = False
-        self.tk.attributes("-fullscreen", False)
+        self.fenetre_principale_tk.attributes("-fullscreen", False)
         return "break"
 
-    def facialRecognition(self):
-        global myName, mat
-        self.fr = FacialRecognition()
-        mat = self.fr.get_matricule()
-        myName = self.fr.get_nom(mat)
-        myName = myName.lower().capitalize()
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- FACE DETECTION -----------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-    def speechRecognition(self):
-        self.text = SpeechRecognition(self.bottomFrame)
-        self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
-
-
-
-
-
+# class qui fait la détection de visages pour afficher la page d'accueil, elle hérite de la classe Thread pour
+# permettre l'enregistrement vidéo en parallèle pendant que l'interface tourne
 class FaceDetect(Thread):
     def __init__(self,Frame):
         Thread.__init__(self)
         self.frame = Frame
 
+    # détection de visage pour le lancement de la page l'accueil et la reconnaissance vocale
     def run(self):
         # le fichier haarcascade_frontalface_default.xml doit être dans le dossier où est sauvegardé le code
         faceDetec = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
-        # 0 correspond en général à la webcam si ça ne marche pas il faut tester d'autres numéros
+        # lancement de la caméra "0" correspond en général à la webcam si ça ne marche pas il faut tester d'autres numéros
         cam = cv2.VideoCapture(0)
 
         i = False
@@ -447,7 +461,7 @@ class FaceDetect(Thread):
 
             if nombre_face > 0:
                 i = True
-                cam.release()
+                cam.release()   # stop la camera
 
         speak.tts("bienvenue", lang)
 
@@ -457,20 +471,18 @@ class FaceDetect(Thread):
         speech = SpeechReconignition(self.frame)
         speech.start()
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- P A E --------------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-#classe qui affiche la vue du pae
+# classe qui crée la page les information du pae
 class Pae(Frame):
     def __init__(self, parent):
 
+        # executé avant le init de la frame car l'objet self.menuFrame vide la fenetre placée en paramètre (parent)
+        # avant d'afficher le menu
         self.menuFrame = Menu(parent)
         self.menuFrame.pack(side=BOTTOM)
 
@@ -486,21 +498,25 @@ class Pae(Frame):
         affiche.pack(pady=30)
         speak.tts("P A E", lang)
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- ACTIVITE -----------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-
-
-
-#classe qui affiche la vue des les activités
+# classe qui crée la vue des les activités
 class Activite(Frame):
     def __init__(self, parent):
 
+        # executé avant le init de la frame car l'objet self.menuFrame vide la fenetre placée en paramètre (parent)
+        # avant d'afficher le menu
         self.menuFrame = Menu(parent)
         self.menuFrame.pack(side=BOTTOM)
 
         Frame.__init__(self, parent, bg="black")
 
 
-        topFrame = Frame(self, background='black')
+        topFrame = Frame(self, bg='black')
         topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
 
         cheminImage = "plans/activites2.png"
@@ -514,25 +530,32 @@ class Activite(Frame):
 
 
 
-#classe qui affiche la vue de l'accueil
+
+
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- ACCUEIL ------------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+
+
+# classe qui crée la vue de l'accueil
 class Accueil(Frame):
     def __init__(self, parent):
 
+        # executé avant le init de la frame car l'objet self.menuFrame vide la fenetre placée en paramètre (parent)
+        # avant d'afficher le menu
         self.menuFrame = Menu(parent)
         self.menuFrame.pack(side=BOTTOM)
 
+        # initialisation de la frame
         Frame.__init__(self, parent, bg="black")
-
         self.parent = parent
-
-
 
         # clock
         self.clock = Clock(self)
         self.clock.pack(side=RIGHT, anchor=N, padx=50, pady=30)
 
-        # self.text = SpeechRecognition(self.bottomFrame)
-        # self.text.pack(side=TOP, anchor=N, padx=100, pady=5)
         # weather
         self.weather = Weather(self)
         self.weather.pack(side=LEFT, anchor=N, padx=50, pady=30)
@@ -541,33 +564,32 @@ class Accueil(Frame):
         self.news = News(self)
         self.news.pack(side=BOTTOM, fill=BOTH, anchor=S, padx=50, pady=30)
 
-        #self.parent.after(3000, self.welcome)
-
-    def welcome(self):
-        wel = Welcome(self.parent)
-        wel.pack(pady=300)
-
         speak.tts("Accueil", lang)
 
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- MENU ---------------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-#class qui affiche le menu
+# class qui crée le menu
 class Menu(Frame):
     def __init__(self, parent):
 
+        # vide la fenetre parent placée en paramètre
         for frame in parent.winfo_children():
             frame.destroy()
 
         Frame.__init__(self, parent, bg="black")
         self.parent = parent
-
-        buttonNavigation = Button(self, text="Navigation", font=FONT_menu, command=self.navigation)
+        buttonNavigation = Button(self, text="Navigation", font=font_menu, command=self.navigation)
         buttonNavigation.grid(row=0, column=1, sticky="nsew", pady=30)
-        buttonAcceuil = Button(self, text="Acceuil", font=FONT_menu, command=self.accueil)
+        buttonAcceuil = Button(self, text="Accueil", font=font_menu, command=self.accueil)
         buttonAcceuil.grid(row=0, column=0, sticky="nsew", pady=30)
-        activite = Button(self, text="Activite", font=FONT_menu, command=self.activite)
+        activite = Button(self, text="Activite", font=font_menu, command=self.activite)
         activite.grid(row=0, column=2, sticky="nsew", pady=30)
-        buttonPae = Button(self, text="Pae", font=FONT_menu, command=self.pae)
+        buttonPae = Button(self, text="Pae", font=font_menu, command=self.pae)
         buttonPae.grid(row=0, column=3, sticky="nsew", pady=30)
 
     #affichage de la vue de navigation
@@ -591,11 +613,18 @@ class Menu(Frame):
         pagePae.pack(side=TOP)
 
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- NAVIGATION ---------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-#class qui gere l'affichage des plans
+# class qui gere l'affichage des plans
 class Navigation(Frame):
     def __init__(self, parent):
 
+        # executé avant le init de la frame car l'objet self.menuFrame vide la fenetre placée en paramètre (parent)
+        # avant d'afficher le menu
         self.menuFrame = Menu(parent)
         self.menuFrame.pack(side=BOTTOM)
 
@@ -607,7 +636,7 @@ class Navigation(Frame):
         self.topFrame.pack(side=TOP)
         self.inputRecherche = Entry(self.topFrame, bd=1)
         self.inputRecherche.grid(row=0, column=0, sticky=E)
-        self.recherche = Button(self.topFrame, text="Recherche", font=FONT_menu, command=self.recherche)
+        self.recherche = Button(self.topFrame, text="Recherche", font=font_menu, command=self.recherche)
         self.recherche.grid(row=0, column=1, sticky=W)
 
         self.dictionnaireDesPlans = {'auditoire 05': "plans/aud05.png",
@@ -625,19 +654,15 @@ class Navigation(Frame):
         affiche.grid(row=1, columnspan=2, pady=30)
         speak.tts("Navigation", lang)
 
+    # on recupère les informations du champ imput de recherche (inputRecherche) et on recherche le local dans
+    # dictionnaireDesPlans puis on affiche
     def recherche(self):
-        # on recupère les informations du inputRecherche et on recherche le local dans dictionnaireDesPlans
-        # puis on affiche
         local = self.inputRecherche.get()
-
         self.recherche_vocale(local)
 
-
-
+    # on recherche auditoire dans dictionnaireDesPlans
+    # puis on affiche
     def recherche_vocale(self, auditoire):
-        # on recherche auditoire dans dictionnaireDesPlans
-        # puis on affiche
-
         local = auditoire
         plans = self.dictionnaireDesPlans
 
@@ -651,18 +676,23 @@ class Navigation(Frame):
             affiche.grid(row=1, columnspan=2, pady=30)
 
 
-#classe qui affiche la page Bienvenu
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- WELCOME ------------------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+
+# classe qui crée la page Bienvenue
 class Welcome(Frame):
     def __init__(self, parent):
         self.menuFrame = Menu(parent)
-        #self.menuFrame.pack(side=BOTTOM)
 
         Frame.__init__(self, parent, bg="black")
 
         topFrame = Frame(self, background='black')
         topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
 
-        message="BIENVENUE A POLYTECH UMONS !"
+        message="BIENVENUE A POLYTECH UMONS"
 
         messageLabel = Label(topFrame, text=message, font=('Helvetica', large_text_size),  fg="white",
                               bg="black")
@@ -671,9 +701,14 @@ class Welcome(Frame):
         speak.tts("Bienvenu au miroir intelligent de l'école polytechnique de l'université de  Mons", lang)
 
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# ------------------------------- SPEECH RECONGNITION ------------------
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
-
-#classe qui gère la navigation vocale
+# classe qui gère la navigation vocale dans l'interface, elle hérite de la classe thread pour permettre l'enregistrement
+# vocale en parallèle pendant que l'interface tourne
 class SpeechReconignition(Thread):
     def __init__(self, Frame):
         Thread.__init__(self)
@@ -681,9 +716,7 @@ class SpeechReconignition(Thread):
         self.discuss = True
 
         self.navigator = ""
-        myName = "patrick"
-        snowWhite = False
-        misUnderstood = False
+
         tl = 2  # for little sentences
         tL = 5  # for long sentences
         t = tl  # default configuration
@@ -691,14 +724,14 @@ class SpeechReconignition(Thread):
 
     # answer function
     def answer(self, toSay, t_stop=tl):
-        """" print and say the 'toSay' variable and can modify time pause"""
+        # print and say the 'toSay' variable and can modify time pause
         print(toSay)
         # execute_command(toSay)
         global t
         t = t_stop
 
-
-    def welcome(self): # utilisé pour arreter le thread et afficher la page de bienvenu
+    #  utilisé pour arreter le thread et afficher la page de bienvenu
+    def welcome(self):
 
         self.discuss = False
 
@@ -708,8 +741,8 @@ class SpeechReconignition(Thread):
         detection = FaceDetect(self.frame)
         detection.start()
 
-
-    def run(self): # commencer l'ecoute
+    # lance le micro et gère les commandes vocales pour naviguer dans l'interface
+    def run(self):
 
         with sr.Microphone(sample_rate=32000) as source:
 
@@ -735,7 +768,7 @@ class SpeechReconignition(Thread):
                     print("Could not request results from Microsoft Bing Voice Recognition service; {0}".format(e))
                     message = ""
                     # search if the answer exists
-                if (re.search("auditoire 24 merci", message) or re.search("24 merci", message)):
+                if re.search("auditoire 24 merci", message) or re.search("24 merci", message):
                     self.answer("ok 24")
                     self.navigator = "auditoire 24"
                     print(self.navigator)
@@ -744,48 +777,49 @@ class SpeechReconignition(Thread):
                     nav.pack(side=TOP)
 
 
-                elif (re.search("auditoire 11 merci", message) or re.search("11 merci", message)):
+                elif re.search("auditoire 11 merci", message) or re.search("11 merci", message):
                     self.answer("ok 11")
                     self.navigator = "auditoire 11"
                     print(self.navigator)
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    direction = "prenez à votre droite ensuite montez jusqu'au premier étage, l'auditoire est sur votre gauche"
+                    direction = "prenez à votre droite ensuite montez jusqu'au premier étage, l'auditoire est " \
+                                "sur votre gauche"
                     speak.tts(direction, lang)
 
-                elif (re.search("auditoire 12 merci", message) or re.search("12 merci", message)):
+                elif re.search("auditoire 12 merci", message) or re.search("12 merci", message):
                     self.answer("ok 12")
                     self.navigator = "auditoire 12"
                     print(self.navigator)
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    direction = "prenez à votre droite ensuite montez jusqu'au premier étage puis tournez à droite, vous êtes arrivez"
+                    direction = "prenez à votre droite ensuite montez jusqu'au premier étage puis tournez à droite," \
+                                " vous êtes arrivez"
                     speak.tts(direction, lang)
 
-                elif (re.search("auditoire 23 merci", message) or re.search("23 merci", message)):
+                elif re.search("auditoire 23 merci", message) or re.search("23 merci", message):
                     self.answer("ok 23")
                     self.navigator = "auditoire 23"
                     print(self.navigator)
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    direction = "Prenez à votre droite jusqu'à l'escalier, montez jusqu'au deuxième étage puis faite quelques pas sur votre gauche l'auditoire se trouve à droite"
+                    direction = "Prenez à votre droite jusqu'à l'escalier, montez jusqu'au deuxième étage puis " \
+                                "faite quelques pas sur votre gauche l'auditoire se trouve à droite"
                     speak.tts(direction, lang)
 
-                elif (re.search("c'est gentil", message) or re.search("c'est ok", message)):
-                    self.answer("A bientôt {} !".format(myName))
-                    discuss = False
 
-                elif (re.search("auditoire 25 merci", message) or re.search("25 merci", message)):
+                elif re.search("auditoire 25 merci", message) or re.search("25 merci", message):
                     self.answer("ok 25")
                     self.navigator = "auditoire 25"
                     print(self.navigator)
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    direction = "comme indiquez sur le plan, prenez à votre gauche ensuite montez jusqu'au deuxième étage l'auditoire est face à vous légèrement à droite"
+                    direction = "comme indiquez sur le plan, prenez à votre droite ensuite montez jusqu'au deuxième" \
+                                " étage l'auditoire est face à vous légèrement à droite"
                     speak.tts(direction, lang)
 
 
@@ -798,7 +832,8 @@ class SpeechReconignition(Thread):
                     nav = Navigation(self.frame)
                     nav.recherche_vocale(self.navigator)
                     nav.pack(side=TOP)
-                    direction = "comme indiquer sur le plan prenez à votre droite jusqu'au IGLAB puis tournez à droite, la destination est à votre droite"
+                    direction = "comme indiquer sur le plan prenez à votre droite jusqu'au IGLAB puis tournez à " \
+                                "droite, la destination est à votre droite"
                     speak.tts(direction, lang)
 
                 elif (re.search("hall d'entrer merci", message) or re.search("secrétariat des étudiants merci",
@@ -814,7 +849,7 @@ class SpeechReconignition(Thread):
 
                     print(self.navigator)
 
-                elif (re.search("activité merci", message)):
+                elif re.search("activité merci", message):
                     self.answer("activité ok")
                     self.navigator = "activite"
 
@@ -824,7 +859,7 @@ class SpeechReconignition(Thread):
                     print(self.navigator)
 
 
-                elif (re.search("navigation merci", message)):
+                elif re.search("navigation merci", message):
                     self.answer("ok")
                     self.navigator = "navigation"
                     print(self.navigator)
@@ -833,8 +868,8 @@ class SpeechReconignition(Thread):
 
 
 
-                elif (re.search("programme des études merci", message) or re.search("P A E merci",
-                                                                             message)):
+                elif re.search("programme des études merci", message) or re.search("P A E merci",
+                                                                             message):
 
 
                     paePage = Pae(self.frame)
@@ -844,29 +879,20 @@ class SpeechReconignition(Thread):
                     self.navigator = "pae"
                     print(self.navigator)
 
-
-
-            #     else:
-            #         if (misUnderstood == True):
-            #             misUnderstood = False
-            #         else:
-            #             t = 0
-            # # to avoid him listening to himself
-            # time.sleep(t)  # stop execution
-            # t = tl  # reset stop time
-
-
+                elif re.search("miroir merci", message):
+                    self.welcome()
 
         os.system("pause")
 
+# ------------------------------------------------------------------------------------------------ #
+# ------------------------------------------------------------------------------------------------ #
+# ---------------------------- lancement de l'interface ------------------------------------------ #
+# ------------------------------------------------------------------------------------------------ #
+# ------------------------------------------------------------------------------------------------ #
 
-##if __name__ == '__main__':
-##    global w
-##    w = FullscreenWindow()
-##    w.tk.mainloop()
 
-w = FullscreenWindow(tk)
-w.tk.mainloop()
+interface = FullscreenWindow()
+interface.fenetre_principale_tk.mainloop()
 
 
 
