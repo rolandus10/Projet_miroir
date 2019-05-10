@@ -389,7 +389,7 @@ class FullscreenWindow():
     # affichage de la page de bienvenue
     def welcome(self):
         welcome = Welcome(self.fenetre_principale_tk)
-        welcome.pack(pady=300)
+        welcome.pack(pady=200)
 
         # lancement de la détection de visage
         detection = FaceDetect(self.fenetre_principale_tk)
@@ -564,7 +564,7 @@ class Accueil(Frame):
         self.news = News(self)
         self.news.pack(side=BOTTOM, fill=BOTH, anchor=S, padx=50, pady=30)
 
-        speak.tts("Accueil", lang)
+        # speak.tts("Accueil", lang)
 
 
 # ----------------------------------------------------------------------
@@ -692,11 +692,33 @@ class Welcome(Frame):
         topFrame = Frame(self, background='black')
         topFrame.pack(side=TOP, anchor=N, fill=BOTH, expand=YES)
 
+        cheminImage = "plans/polytech_mons.png"
+        img2 = Image.open(cheminImage)
+        img2 = img2.resize((300, 200), Image.ANTIALIAS)
+        photo2 = ImageTk.PhotoImage(img2)
+        affiche = Label(parent, image=photo2)
+        affiche.image = photo2
+        affiche.pack(anchor=NE, side=LEFT)
+
+        cheminImage = "plans/umons.png"
+        img2 = Image.open(cheminImage)
+        img2 = img2.resize((300, 200), Image.ANTIALIAS)
+        photo2 = ImageTk.PhotoImage(img2)
+        affiche = Label(parent, image=photo2)
+        affiche.image = photo2
+        affiche.pack(anchor=NE, side=RIGHT)
+
         message="BIENVENUE A POLYTECH UMONS"
 
-        messageLabel = Label(topFrame, text=message, font=('Helvetica', large_text_size),  fg="white",
+        messageLabel = Label(parent, text=message, font=('Helvetica', large_text_size),  fg="white",
                               bg="black")
-        messageLabel.pack()
+        messageLabel.pack(anchor=CENTER, pady=300)
+
+        autor = "Autor: @KUE  @DJAKOU @LEKEMO"
+
+        autorLabel = Label(parent, text=autor, font=('Helvetica', xsmall_text_size), fg="white",
+                             bg="black")
+        autorLabel.pack(side=BOTTOM)
 
         speak.tts("Bienvenu au miroir intelligent de l'école polytechnique de l'université de  Mons", lang)
 
@@ -761,7 +783,7 @@ class SpeechReconignition(Thread):
                     print(ve)
 
                 except sr.UnknownValueError:
-                    self.answer("Je n'ai pas compris, pouvez-vous répéter ?", 3.5)
+                    self.answer("Je n'ai pas compris, pouvez-vous répéter ?", 3)
                     message = ""
                     # misUnderstood = True
                 except sr.RequestError as e:
